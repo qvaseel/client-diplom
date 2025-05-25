@@ -103,6 +103,8 @@ export interface Lesson {
   date: string;
   topic?: string;
   typeOfLesson: string;
+  homework?: Homework;
+  grades?: Grade[];
 }
 
 export interface LessonCreateDto {

@@ -53,7 +53,6 @@ export function EditStudentModal({ isOpen, onClose, student }: Props) {
       dateOfBirth: form.dateOfBirth,
       telegramId: form.telegramId 
     };
-    console.log(updatedData)
     await updateUser(student.id, updatedData);
     await fetchStudents();
     onClose();

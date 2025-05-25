@@ -19,6 +19,11 @@ export const PAGES = {
             title: 'Профиль',
             link: ROUTE.PROFILE,
             icon: UserIcon
+        },
+        {
+            title: "Дневник",
+            link: ROUTE.STUDENT_DIARY,
+            icon: UserIcon
         }
     ],
 

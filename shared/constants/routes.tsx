@@ -4,6 +4,7 @@ export const ROUTE = {
   USERS: "users",
   SCHEDULE: "schedule",
   PROFILE: "profile",
+  STUDENT_DIARY: "student-diary",
 
   ADMIN_PANEL: "admin-panel",
   ADMIN_SCHEDULE: "admin-schedule",

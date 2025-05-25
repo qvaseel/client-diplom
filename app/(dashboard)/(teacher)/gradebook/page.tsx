@@ -75,7 +75,6 @@ export default function TeacherJournalPage() {
       );
   
 
-      console.log(selectedGroup, selectedDiscipline, user.id)
       // Ищем нужную запись в расписании
       const matching = scheduleData.find(
         (s) =>
@@ -85,7 +84,6 @@ export default function TeacherJournalPage() {
       );
   
       setSelectedScheduleId(matching?.id ?? null);
-      console.log(selectedScheduleId)
     };
   
     loadData();
@@ -113,7 +111,6 @@ export default function TeacherJournalPage() {
 
   const handleCreateLesson = async () => {
     if (!selectedScheduleId || !lessonDate) return;
-    console.log(selectedScheduleId, lessonDate, lessonTopic, lessonType)
     await createLesson({
       scheduleId: selectedScheduleId,
       date: lessonDate,

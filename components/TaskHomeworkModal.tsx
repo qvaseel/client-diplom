@@ -1,33 +1,38 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import {
-  Dialog,
-  TextField,
-  Flex,
-  Button,
-  Text
-} from "@radix-ui/themes";
+import { Dialog, TextField, Flex, Button, Link } from "@radix-ui/themes";
 import * as Label from "@radix-ui/react-label";
 import { useState, useEffect } from "react";
 import { Upload } from "lucide-react";
-import { Lesson } from "@/interface";
 import { useHomeworkStore } from "@/store/homeworkStore";
+import { Homework, Lesson } from "@/interface";
 
 interface Props {
-  lesson: Lesson | null;
   isOpen: boolean;
   onClose: (val: boolean) => void;
+  homework: Homework | null;
+  lesson: Lesson | null;
 }
 
-export const CreateHomeworkModal = ({ lesson, isOpen, onClose }: Props) => {
-  const { register, handleSubmit, reset, setValue } = useForm();
+export const TaskHomeworkModal = ({
+  isOpen,
+  onClose,
+  homework,
+  lesson,
+}: Props) => {
+  const { register, handleSubmit, setValue, reset } = useForm();
   const [fileName, setFileName] = useState<string | null>(null);
-  const { createHomework } = useHomeworkStore();
+  const { updateHomework } = useHomeworkStore();
 
   useEffect(() => {
     register("file");
-  }, [register]);
+    setValue("title", homework?.title);
+    setValue("description", homework?.description || "");
+    setValue("dueDate", homework?.dueDate || "");
+    setValue("lessonId", lesson?.id || "");
+    setFileName(homework?.fileUrl?.split("/").pop() || null);
+  }, [register, setValue, homework]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -39,17 +44,16 @@ export const CreateHomeworkModal = ({ lesson, isOpen, onClose }: Props) => {
 
   const onSubmit = async (data: any) => {
     const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description || "");
+    formData.append("dueDate", data.dueDate || "");
+    formData.append("lessonId", lesson?.id.toString() || "");
 
-    for (const key in data) {
-      if (key !== "file") {
-        formData.append(key, data[key]);
-      }
+    if (data.file instanceof File) {
+      formData.append("file", data.file);
     }
 
-    formData.append("lessonId", String(lesson?.id));
-    formData.append("file", data.file);
-
-    await createHomework(formData);
+    await updateHomework(homework?.id || 1, formData);
     reset();
     setFileName(null);
     onClose(false);
@@ -58,7 +62,7 @@ export const CreateHomeworkModal = ({ lesson, isOpen, onClose }: Props) => {
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Content>
-        <Dialog.Title>Домашнее задание</Dialog.Title>
+        <Dialog.Title>Редактировать домашнее задание</Dialog.Title>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <TextField.Root
             {...register("title")}
@@ -71,9 +75,6 @@ export const CreateHomeworkModal = ({ lesson, isOpen, onClose }: Props) => {
             placeholder="Описание"
             size="3"
           />
-           <Label.Root htmlFor="dueDate" className="text-sm font-medium">
-              Дедлайн
-            </Label.Root>
           <TextField.Root
             {...register("dueDate")}
             type="date"
@@ -81,31 +82,35 @@ export const CreateHomeworkModal = ({ lesson, isOpen, onClose }: Props) => {
             size="3"
           />
 
+          <div>
+            <Link
+              href={`${process.env.NEXT_PUBLIC_API_URL}${homework?.fileUrl}`}
+              target="_blank"
+            >
+              Открыть
+            </Link>
+          </div>
           <div className="space-y-2">
             <Label.Root htmlFor="fileUpload" className="text-sm font-medium">
-              Загрузите файл
+              Заменить файл (необязательно)
             </Label.Root>
-
             <label
               htmlFor="fileUpload"
               className="flex items-center justify-center gap-2 rounded border border-dashed border-gray-400 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
             >
               <Upload size={16} />
-              Нажмите, чтобы выбрать файл
+              Выбрать файл
             </label>
-
             <input
               id="fileUpload"
               type="file"
               className="hidden"
               onChange={handleFileChange}
-              required
             />
 
             {fileName && (
               <p className="text-sm text-gray-600">
-                📎 Прикреплённый файл:{" "}
-                <span className="font-medium">{fileName}</span>
+                📎 Текущий файл: <span className="font-medium">{fileName}</span>
               </p>
             )}
           </div>

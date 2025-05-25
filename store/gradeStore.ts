@@ -1,10 +1,20 @@
 import { create } from 'zustand';
 import { api } from '@/api/api';
-import { CreateGradeDto, Grade } from '@/interface';
+import { CreateGradeDto, Grade, HomeworkSubmission, Lesson } from '@/interface';
+
+export type GradeWithLesson = {
+  id: string;
+  grade: number | null;
+  comment?: string;
+  lesson: Lesson;
+  homeworkSubmission?: HomeworkSubmission;
+  homeworkSubmissionId?: number;
+}
 
 interface GradeStore {
   grades: Grade[];
   allGrades: Grade[]; 
+  diaryByDate: Record<string, GradeWithLesson[]>
   loadAllGradeByStudentAndDiscipline: (studentId: number, disciplineId: number) => Promise<void>;
   loadAllGradeByGroupAndDiscipline: (groupId: number, disciplineId: number) => Promise<void>;
   loadGradesByLessonId: (lessonId: number) => Grade[];
@@ -12,11 +22,13 @@ interface GradeStore {
   findGradeByStudentAndLesson: (studentId: number, lessonId: number) => Grade | undefined;
   createGrade: (grade: Partial<CreateGradeDto>) => Promise<void>;
   updateGrade: (id: number, grade: Partial<Grade>) => Promise<void>;
+  loadDiaryByDate: (date: string, studentId: number) => Promise<void>;
 }
 
 export const useGradeStore = create<GradeStore>((set, get) => ({
   grades: [],
   allGrades: [],
+  diaryByDate: {},
 
   loadAllGradeByStudentAndDiscipline: async (studentId, disciplineId) => {
     const res = await api.get<Grade[]>(`/grades/by-student-and-discipline?studentId=${studentId}&disciplineId=${disciplineId}`);
@@ -42,6 +54,16 @@ export const useGradeStore = create<GradeStore>((set, get) => ({
     const res = await api.get<Grade[]>(`/grades/by-student?studentId=${studentId}`);
     set({ allGrades: res.data });
   },
+
+loadDiaryByDate: async (date: string, studentId: number) => {
+  const res = await api.get<GradeWithLesson[]>(`/grades/by-date?date=${date}&studentId=${studentId}`);
+      set((state) => ({
+      diaryByDate: {
+        ...state.diaryByDate,
+        [date]: res.data,
+      },
+    }))
+},
 
   createGrade: async (grade) => {
     const res = await api.post('/grades', grade);

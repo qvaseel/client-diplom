@@ -22,7 +22,6 @@ export const useHomeworkStore = create<HomeworkStore>((set) => ({
   },
 
   createHomework: async (formData: FormData) => {
-    console.log(formData)
     const res = await api.post("/homeworks", formData, {
               headers: {
         'Content-Type': 'multipart/form-data',

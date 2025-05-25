@@ -18,6 +18,7 @@ import { CreateHomeworkModal } from "@/components/CreateHomeworkModal";
 import { useHomeworkStore } from "@/store/homeworkStore";
 import { HomeworkSubmissionsTable } from "@/components/HomeworkSubmissionsTable";
 import { useHomeworkSubmissionStore } from "@/store/homeworkSubmission";
+import { TaskHomeworkModal } from "@/components/TaskHomeworkModal";
 
 export default function EditLessonPage() {
   const { id } = useParams();
@@ -39,8 +40,8 @@ export default function EditLessonPage() {
   } = useGradeStore();
 
   const { fetchHomeworkByLesson, homework } = useHomeworkStore();
-  const { fetchAllHomeworksSubmissions, homeworksSubmissions } =
-    useHomeworkSubmissionStore();
+  const {fetchHomeworSubmissionByHomework, homeworksSubmissions } = useHomeworkSubmissionStore();
+ 
 
   const [gradesState, setGradesState] = useState<Record<number, number | null>>(
     {}
@@ -56,6 +57,7 @@ export default function EditLessonPage() {
   const [typeOfLessonState, setTypeOfLessonState] = useState("");
   const [topicOfLesson, setTopicOfLesson] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     getLessonById(lessonId);
@@ -63,6 +65,12 @@ export default function EditLessonPage() {
     fetchStudentsByGroup(Number(groupId));
     loadAllGradeByGroupAndDiscipline(Number(groupId), Number(disciplineId));
   }, [lessonId]);
+
+useEffect(() => {
+  if (homework?.id) {
+    fetchHomeworSubmissionByHomework(homework.id);
+  }
+}, [homework]);
 
   useEffect(() => {
     if (lesson?.typeOfLesson || lesson?.topic) {
@@ -155,9 +163,11 @@ export default function EditLessonPage() {
         <Button color="red" onClick={() => handleDelete(lessonId)}>
           Удалить занятие
         </Button>
-        <Button onClick={() => setIsCreateModalOpen(true)}>
-          Добавить домашнее задание
-        </Button>
+        {!homework && (
+          <Button onClick={() => setIsCreateModalOpen(true)}>
+            Добавить домашнее задание
+          </Button>
+        )}
       </Flex>
 
       <Heading as="h4">
@@ -166,39 +176,41 @@ export default function EditLessonPage() {
       </Heading>
 
       {/* блок выбора типа занятия */}
-      <Flex gap="3">
-        <Select.Root
-          value={typeOfLessonState}
-          onValueChange={(val) => setTypeOfLessonState(val)}
-        >
-          <Select.Trigger>
-            {typeOfLessonState || "Выбрать тип..."}
-          </Select.Trigger>
-          <Select.Content position="popper">
-            <Select.Item value="Лекция">Лекция</Select.Item>
-            <Select.Item value="Устный ответ">Устный ответ</Select.Item>
-            <Select.Item value="Контрольная работа">
-              Контрольная работа
-            </Select.Item>
-            <Select.Item value="Итоговая работа">Итоговая работа</Select.Item>
-            <Select.Item value="Самостоятельная работа">
-              Самостоятельная работа
-            </Select.Item>
-            <Select.Item value="Практическая работа">
-              Практическая работа
-            </Select.Item>
-          </Select.Content>
-        </Select.Root>
 
-        <TextField.Root
-          placeholder="Тема занятия"
-          value={topicOfLesson ?? ""}
-          onChange={(e) => setTopicOfLesson(e.target.value)}
-        />
-      </Flex>
+      <Flex direction="row" justify="between" gap="2">
+        <Flex direction="column" gap="4" className={`${homework ? 'w-1/2' : 'w-full'}`}>
+          <Flex gap="3">
+            <Select.Root
+              value={typeOfLessonState}
+              onValueChange={(val) => setTypeOfLessonState(val)}
+            >
+              <Select.Trigger>
+                {typeOfLessonState || "Выбрать тип..."}
+              </Select.Trigger>
+              <Select.Content position="popper">
+                <Select.Item value="Лекция">Лекция</Select.Item>
+                <Select.Item value="Устный ответ">Устный ответ</Select.Item>
+                <Select.Item value="Контрольная работа">
+                  Контрольная работа
+                </Select.Item>
+                <Select.Item value="Итоговая работа">
+                  Итоговая работа
+                </Select.Item>
+                <Select.Item value="Самостоятельная работа">
+                  Самостоятельная работа
+                </Select.Item>
+                <Select.Item value="Практическая работа">
+                  Практическая работа
+                </Select.Item>
+              </Select.Content>
+            </Select.Root>
 
-      <Flex direction="row" justify='between'>
-        <Flex direction="column" gap='4'>
+            <TextField.Root
+              placeholder="Тема занятия"
+              value={topicOfLesson ?? ""}
+              onChange={(e) => setTopicOfLesson(e.target.value)}
+            />
+          </Flex>
           <Table.Root variant="surface">
             <Table.Header>
               <Table.Row>
@@ -252,31 +264,35 @@ export default function EditLessonPage() {
               ))}
             </Table.Body>
           </Table.Root>
-
-          <Button className="mt-4" onClick={handleSave}>
-            Сохранить
-          </Button>
+          <Button onClick={handleSave}>Сохранить</Button>
         </Flex>
         {homework && (
-          <div>
-            <div>
-              <p>{homework.title}</p>
-              <p>{homework.description}</p>
-
-              <p>{homework.dueDate}</p>
+          <Flex direction="column" gap="4" className="w-1/2">
+            <div className="w-fit">
+              <Button
+                className="w-fit"
+                onClick={() => setIsEditModalOpen(true)}
+              >
+                Просмотреть домашнее задание
+              </Button>
             </div>
             <HomeworkSubmissionsTable
-              students={users}
               homeworkId={homework.id}
-              submissions={homeworksSubmissions}
             />
-          </div>
+          </Flex>
         )}
       </Flex>
+
       <CreateHomeworkModal
         isOpen={isCreateModalOpen}
         onClose={setIsCreateModalOpen}
         lesson={lesson}
+      />
+      <TaskHomeworkModal
+        isOpen={isEditModalOpen}
+        onClose={setIsEditModalOpen}
+        lesson={lesson}
+        homework={homework}
       />
     </Flex>
   );
