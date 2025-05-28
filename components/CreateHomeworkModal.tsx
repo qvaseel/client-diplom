@@ -18,9 +18,10 @@ interface Props {
   lesson: Lesson | null;
   isOpen: boolean;
   onClose: (val: boolean) => void;
+  onCreated?: () => void;
 }
 
-export const CreateHomeworkModal = ({ lesson, isOpen, onClose }: Props) => {
+export const CreateHomeworkModal = ({ lesson, isOpen, onClose, onCreated }: Props) => {
   const { register, handleSubmit, reset, setValue } = useForm();
   const [fileName, setFileName] = useState<string | null>(null);
   const { createHomework } = useHomeworkStore();
@@ -53,6 +54,7 @@ export const CreateHomeworkModal = ({ lesson, isOpen, onClose }: Props) => {
     reset();
     setFileName(null);
     onClose(false);
+    onCreated?.();
   };
 
   return (

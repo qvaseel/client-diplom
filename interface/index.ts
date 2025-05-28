@@ -122,6 +122,8 @@ export interface Grade {
   grade?: number;
   comment?: string;
   homeworkSubmission?: HomeworkSubmission;
+  isHomework: boolean;
+  isPassed: boolean;
 }
 
 export interface CreateGradeDto {
@@ -131,6 +133,8 @@ export interface CreateGradeDto {
   attend: boolean;
   comment?: string;
   homeworkSubmissionId: number;
+  isHomework: boolean;
+  isPassed: boolean;
 }
 
 export interface DecodedUser {
@@ -171,6 +175,7 @@ export interface Homework {
   description?: string;
   dueDate: string;
   fileUrl: string;
+  submissions: HomeworkSubmission[];
 }
 
 export interface CreateHomeworkDto {
@@ -184,6 +189,7 @@ export interface CreateHomeworkDto {
 export interface HomeworkSubmission {
   id: number;
   homework: Homework;
+  studentId: number;
   student: User;
   fileUrl?: string;
   comment?: string;

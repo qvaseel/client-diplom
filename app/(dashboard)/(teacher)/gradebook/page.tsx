@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import GroupSelector from "@/components/GroupSelector";
 import { useUserStore } from "@/store/userStore";
@@ -45,6 +46,12 @@ export default function TeacherJournalPage() {
     null
   );
 
+  const searchParams = useSearchParams();
+const router = useRouter();
+
+// Извлекаем groupId и disciplineId из URL
+
+
   useEffect(() => {
     fetchGroups();
     if (selectedGroup) fetchStudentsByGroup(selectedGroup);
@@ -59,6 +66,23 @@ export default function TeacherJournalPage() {
     fetchDisciplinesOfTeacher,
     user,
   ]);
+
+useEffect(() => {
+  const groupParam = searchParams.get("groupId");
+  const disciplineParam = searchParams.get("disciplineId");
+
+  if (groupParam) setSelectedGroup(Number(groupParam));
+  if (disciplineParam) setSelectedDiscipline(Number(disciplineParam));
+}, []);
+
+useEffect(() => {
+  const params = new URLSearchParams();
+  if (selectedGroup) params.set("groupId", String(selectedGroup));
+  if (selectedDiscipline) params.set("disciplineId", String(selectedDiscipline));
+
+  const query = params.toString();
+  router.replace(`?${query}`);
+}, [selectedGroup, selectedDiscipline]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -128,13 +152,17 @@ export default function TeacherJournalPage() {
 
       {/* === Фильтры === */}
       <Flex display="flex" direction="row" gap="2">
-        <GroupSelector setSelectedGroup={setSelectedGroup} />
+<GroupSelector
+  setSelectedGroup={setSelectedGroup}
+  selectedGroup={selectedGroup}
+/>
 
-        <DisciplineSelector
-          loading={loading}
-          disciplines={disciplines}
-          setSelectedDiscipline={setSelectedDiscipline}
-        />
+<DisciplineSelector
+  loading={loading}
+  disciplines={disciplines}
+  setSelectedDiscipline={setSelectedDiscipline}
+  selectedDiscipline={selectedDiscipline}
+/>
 
       </Flex>
 
@@ -211,12 +239,26 @@ export default function TeacherJournalPage() {
               />
               <Select.Root value={lessonType} onValueChange={setLessonType}>
                 <Select.Trigger placeholder="Тип занятия" />
-                <Select.Content>
+                <Select.Content position="popper">
+                  <Select.Item value="Лекция">Лекция</Select.Item>
+
                   <Select.Item value="Устный ответ">Устный ответ</Select.Item>
+                   <Select.Item value="Тест">Тест</Select.Item>
                   <Select.Item value="Практическая работа">
                     Практическая работа
                   </Select.Item>
-                  <Select.Item value="Тест">Тест</Select.Item>
+                 <Select.Item value="Самостоятельная работа">
+                    Самостоятельная работа
+                  </Select.Item>
+                  <Select.Item value="Контрольная работа">
+                    Контрольная работа
+                  </Select.Item>
+                  <Select.Item value="Итоговая работа">
+                    Итоговая работа
+                  </Select.Item>
+                  <Select.Item value="Курсовая">
+                    Курсовая
+                  </Select.Item>
                 </Select.Content>
               </Select.Root>
               <Button onClick={handleCreateLesson} disabled={!lessonDate}>

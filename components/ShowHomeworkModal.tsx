@@ -21,7 +21,7 @@ interface Props {
   isOpen: boolean;
   onClose: (val: boolean) => void;
   homework: Homework | null;
-  homeworkSubmission: HomeworkSubmission | null;
+  homeworkSubmissionId: number | null;
   lesson: Lesson | null;
 }
 
@@ -29,17 +29,25 @@ export const ShowHomeworkModal = ({
   isOpen,
   onClose,
   homework,
-  homeworkSubmission,
-  lesson,
+  homeworkSubmissionId,
 }: Props) => {
   const { register, handleSubmit, setValue, reset } = useForm();
   const [fileName, setFileName] = useState<string | null>(null);
-  const { updateHomework } = useHomeworkSubmissionStore();
+  const { updateHomework, fetchOneHomeworkSubmission, homeworkSubmission } =
+    useHomeworkSubmissionStore();
+
+  useEffect(() => {
+    if (isOpen && homeworkSubmissionId) {
+      fetchOneHomeworkSubmission(homeworkSubmissionId);
+    }
+  }, [isOpen, homeworkSubmissionId]);
 
   useEffect(() => {
     register("file");
     setFileName(homeworkSubmission?.fileUrl?.split("/").pop() || null);
-  }, [register, setValue, homeworkSubmission]);
+  }, [homeworkSubmission, register]);
+
+  console.log(homeworkSubmission);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -57,15 +65,15 @@ export const ShowHomeworkModal = ({
     }
 
     if (!homeworkSubmission?.id) {
-        console.error("Нет ID для домашнего задания");
-        return;
-        }
-        await updateHomework(homeworkSubmission.id, formData);
+      console.error("Нет ID для домашнего задания");
+      return;
+    }
+    await updateHomework(homeworkSubmission.id, formData);
     reset();
     setFileName(null);
     onClose(false);
   };
-console.log(homework)
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Content>
@@ -75,56 +83,98 @@ console.log(homework)
           <Flex direction="column" gap="1">
             <Text>Название: {homework?.title}</Text>
             <Text>Описание: {homework?.description}</Text>
-            <Text>Дедлайн: {homework?.dueDate}</Text>
             <Text>
-              Файл:{" "}
+              Дедлайн:{" "}
+              {homework?.dueDate
+                ? new Date(homework.dueDate).toLocaleDateString("ru-RU", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })
+                : "не указан"}
+            </Text>
+            <Text>
               <Link
                 href={`${process.env.NEXT_PUBLIC_API_URL}${homework?.fileUrl}`}
                 target="_blank"
               >
-                Открыть
+                Открыть файл с ДЗ
               </Link>
             </Text>
           </Flex>
         </Card>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Text>Прикрепите файл с домашним заданием</Text>
-          <div>
-            {homeworkSubmission?.fileUrl && (<Link
-              href={`${process.env.NEXT_PUBLIC_API_URL}${homeworkSubmission?.fileUrl}`}
-              target="_blank"
-            >
-              Открыть
-            </Link>)}
-          </div>
+          {homeworkSubmission?.grade?.grade && (
+            <Flex direction="column" gap="2" p={"4"}>
+              <Text weight="bold">Домашнее задание принято</Text>
+              <Text>
+                Оценка: {homeworkSubmission?.grade?.grade || "не выставлена"}
+              </Text>
+              <Text>
+                Комментарий: {homeworkSubmission?.grade?.comment || "-"}
+              </Text>
+              <div>
+                {homeworkSubmission?.fileUrl && (
+                  <Link
+                    href={`${process.env.NEXT_PUBLIC_API_URL}${homeworkSubmission?.fileUrl}`}
+                    target="_blank"
+                  >
+                    Открыть ваш файл
+                  </Link>
+                )}
+              </div>
+            </Flex>
+          )}
+          {!homeworkSubmission?.grade?.grade && (
+            <Flex direction="column" gap="2" p="4">
+              <Text weight="bold">Прикрепите файл с домашним заданием</Text>
 
-          <div className="space-y-2">
-            <Label.Root htmlFor="fileUpload" className="text-sm font-medium">
-              Заменить файл (необязательно)
-            </Label.Root>
-            <label
-              htmlFor="fileUpload"
-              className="flex items-center justify-center gap-2 rounded border border-dashed border-gray-400 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-            >
-              <Upload size={16} />
-              Выбрать файл
-            </label>
-            <input
-              id="fileUpload"
-              type="file"
-              className="hidden"
-              onChange={handleFileChange}
-            />
+              <div>
+                {homeworkSubmission?.fileUrl && (
+                  <Link
+                    href={`${process.env.NEXT_PUBLIC_API_URL}${homeworkSubmission?.fileUrl}`}
+                    target="_blank"
+                  >
+                    Открыть ваш файл
+                  </Link>
+                )}
+              </div>
 
-            {fileName && (
-              <p className="text-sm text-gray-600">
-                📎 Текущий файл: <span className="font-medium">{fileName}</span>
-              </p>
-            )}
-          </div>
+              <div className="space-y-2">
+                <Label.Root
+                  htmlFor="fileUpload"
+                  className="text-sm font-medium"
+                >
+                  Заменить файл (необязательно)
+                </Label.Root>
+                <label
+                  htmlFor="fileUpload"
+                  className="flex items-center justify-center gap-2 rounded border border-dashed border-gray-400 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                >
+                  <Upload size={16} />
+                  Выбрать файл
+                </label>
+                <input
+                  id="fileUpload"
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+
+                {fileName && (
+                  <p className="text-sm text-gray-600">
+                    📎 Текущий файл:{" "}
+                    <span className="font-medium">{fileName}</span>
+                  </p>
+                )}
+              </div>
+            </Flex>
+          )}
 
           <Flex justify="between">
-            <Button type="submit">Сохранить</Button>
+            {!homeworkSubmission?.grade?.grade && (
+              <Button type="submit">Сохранить</Button>
+            )}
             <Dialog.Close>
               <Button variant="soft" type="button">
                 Отмена

@@ -21,6 +21,9 @@ export default function DaySchedule({ date }: Props) {
     }
   }, [formattedDate, profileUser]);
 
+   const visibleGrades = grades.filter((grade) => !grade.homeworkSubmissionId);
+   console.log(visibleGrades)
+
   return (
     <div className="bg-white rounded-xl shadow p-4">
       <h2 className="text-lg font-semibold mb-2">
@@ -30,9 +33,9 @@ export default function DaySchedule({ date }: Props) {
           month: "long",
         })}
       </h2>
-      {grades.length > 0 ? (
+      {visibleGrades.length > 0 ? (
         <div className="space-y-2">
-          {grades.map((grade) => (
+          {visibleGrades.map((grade) => (
             <LessonCard key={grade.id} grade={grade} />
           ))}
         </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TextField, Button, Table } from "@radix-ui/themes";
+import { TextField, Button, Table, Link } from "@radix-ui/themes";
 import { useHomeworkSubmissionStore } from "@/store/homeworkSubmission";
 
 interface Props {
@@ -26,7 +26,7 @@ export const HomeworkSubmissionsTable = ({ homeworkId }: Props) => {
     const initialGrades: Record<number, { grade: number; comment: string }> =
       {};
     homeworksSubmissions.forEach((submission) => {
-      const studentId = submission.student.id;
+      const studentId = submission.studentId;
       initialGrades[studentId] = {
         grade: submission.grade?.grade ?? 0,
         comment: submission.grade?.comment ?? "",
@@ -54,7 +54,7 @@ const handleSaveAll = async () => {
   let successCount = 0;
 
   for (const submission of homeworksSubmissions) {
-    const studentId = submission.student.id;
+    const studentId = submission.studentId;
     const data = grades[studentId];
     if (data && !isNaN(data.grade)) {
       const dto = {
@@ -82,7 +82,6 @@ const handleSaveAll = async () => {
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>ФИО</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Файл</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Оценка</Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell>Комментарий</Table.ColumnHeaderCell>
@@ -99,20 +98,16 @@ const handleSaveAll = async () => {
 
             return (
               <Table.Row key={studentId}>
-                <Table.RowHeaderCell>
-                  {student.lastName} {student.firstName}
-                </Table.RowHeaderCell>
                 <Table.Cell>
                   {submission.fileUrl ? (
-                    <a
-                      href={submission.fileUrl}
-                      target="_blank"
-                      download
-                      rel="noopener noreferrer"
-                      className="text-blue-600 underline"
-                    >
-                      Файл
-                    </a>
+
+                  <Link
+                    href={`${process.env.NEXT_PUBLIC_API_URL}${submission.fileUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    
+                    className="text-blue-600 underline"
+                  >Файл</Link>
                   ) : (
                     <span className="text-gray-400 italic">нет</span>
                   )}

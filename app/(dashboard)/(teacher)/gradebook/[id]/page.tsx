@@ -106,7 +106,7 @@ useEffect(() => {
 
     for (const student of users) {
       const gradeValue = gradesState[student.id] ?? null;
-      const attend = attendanceState[student.id] ?? false;
+      const attend = attendanceState[student.id] ?? true;
       const comment = commentsState[student.id] ?? null;
 
       const existingGrade = findGradeByStudentAndLesson(student.id, lessonId);
@@ -189,19 +189,23 @@ useEffect(() => {
               </Select.Trigger>
               <Select.Content position="popper">
                 <Select.Item value="Лекция">Лекция</Select.Item>
-                <Select.Item value="Устный ответ">Устный ответ</Select.Item>
-                <Select.Item value="Контрольная работа">
-                  Контрольная работа
-                </Select.Item>
-                <Select.Item value="Итоговая работа">
-                  Итоговая работа
-                </Select.Item>
-                <Select.Item value="Самостоятельная работа">
-                  Самостоятельная работа
-                </Select.Item>
-                <Select.Item value="Практическая работа">
-                  Практическая работа
-                </Select.Item>
+                  <Select.Item value="Устный ответ">Устный ответ</Select.Item>
+                   <Select.Item value="Тест">Тест</Select.Item>
+                  <Select.Item value="Практическая работа">
+                    Практическая работа
+                  </Select.Item>
+                 <Select.Item value="Самостоятельная работа">
+                    Самостоятельная работа
+                  </Select.Item>
+                  <Select.Item value="Контрольная работа">
+                    Контрольная работа
+                  </Select.Item>
+                  <Select.Item value="Итоговая работа">
+                    Итоговая работа
+                  </Select.Item>
+                  <Select.Item value="Курсовая">
+                    Курсовая
+                  </Select.Item>
               </Select.Content>
             </Select.Root>
 
@@ -209,6 +213,7 @@ useEffect(() => {
               placeholder="Тема занятия"
               value={topicOfLesson ?? ""}
               onChange={(e) => setTopicOfLesson(e.target.value)}
+              className="w-md"
             />
           </Flex>
           <Table.Root variant="surface">
@@ -240,7 +245,7 @@ useEffect(() => {
                   </Table.Cell>
                   <Table.Cell>
                     <Switch
-                      checked={attendanceState[s.id] ?? false}
+                      checked={attendanceState[s.id] ?? true}
                       onCheckedChange={(checked) =>
                         setAttendanceState((prev) => ({
                           ...prev,
@@ -287,6 +292,9 @@ useEffect(() => {
         isOpen={isCreateModalOpen}
         onClose={setIsCreateModalOpen}
         lesson={lesson}
+          onCreated={() => {
+    fetchHomeworkByLesson(lessonId);
+  }}
       />
       <TaskHomeworkModal
         isOpen={isEditModalOpen}
