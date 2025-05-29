@@ -13,6 +13,8 @@ import {
 import { useEffect, useState } from "react";
 import { usePortfolioStore } from "@/store/portfolioStore";
 import { Achievement } from "@/interface";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { EditAchievementModal } from "./EditAchievementModal";
 
 interface Props {
   userId: number;
@@ -20,7 +22,9 @@ interface Props {
 }
 
 export const Portfolio = ({ userId, innerWidth }: Props) => {
-  const { portfolio, fetchPortfolio } = usePortfolioStore();
+  const { portfolio, fetchPortfolio, deleteAchievement } = usePortfolioStore();
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedAchievement, setSelectedAchievement] = useState<any>(null);
 
   useEffect(() => {
     fetchPortfolio(userId);
@@ -33,6 +37,18 @@ export const Portfolio = ({ userId, innerWidth }: Props) => {
       return "Не зачтено";
     }
   };
+
+    const handleDelete = async (id: number) => {
+    if (confirm("Вы действительно хотите удалить достижение?")) {
+      deleteAchievement(id);
+    }
+  };
+
+   const openEditModal = (achievement: any) => {
+    setSelectedAchievement(achievement);
+    setIsEditOpen(true);
+  };
+
 
   const pSize = innerWidth < 640 ? "1" : "4";
   const tableSize =
@@ -49,7 +65,7 @@ export const Portfolio = ({ userId, innerWidth }: Props) => {
       </Heading>
 
       {portfolio?.achievements?.length === 0 ? (
-        <Text>В портфолио студента пока не добавлено ни одного достижения</Text>
+        <Text>В ваше портфолио пока не добавлено ни одного достижения</Text>
       ) : (
         <ScrollArea scrollbars="both" type="always" style={{ maxHeight: 600 }}>
           <Table.Root size={tableSize} variant="surface">
@@ -59,6 +75,7 @@ export const Portfolio = ({ userId, innerWidth }: Props) => {
                 <Table.ColumnHeaderCell>Описание</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell>Статус</Table.ColumnHeaderCell>
                 <Table.ColumnHeaderCell>Ссылка</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>Действия</Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -75,12 +92,38 @@ export const Portfolio = ({ userId, innerWidth }: Props) => {
                       Открыть
                     </Link>
                   </Table.Cell>
+                  <Table.Cell>
+                  <Flex gap="3">
+                    <IconButton
+                      variant="ghost"
+                      color="blue"
+                      onClick={() => openEditModal(a)}
+                    >
+                      <PencilIcon width="32" height="32" />
+                    </IconButton>
+                    <IconButton
+                      variant="ghost"
+                      color="red"
+                      onClick={() => handleDelete(a.id)}
+                    >
+                      <TrashIcon width="32" height="32" />
+                    </IconButton>
+                  </Flex>
+                </Table.Cell>
                 </Table.Row>
               ))}
             </Table.Body>
           </Table.Root>
         </ScrollArea>
       )}
+            {selectedAchievement && (
+              <EditAchievementModal
+                isOpen={isEditOpen}
+                onClose={setIsEditOpen}
+                achievement={selectedAchievement}
+                userId={userId}
+              />
+            )}
     </Flex>
   );
 };

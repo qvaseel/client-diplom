@@ -1,12 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import {
-  Dialog,
-  TextField,
-  Flex,
-  Button,
-} from "@radix-ui/themes";
+import { Dialog, TextField, Flex, Button } from "@radix-ui/themes";
 import * as Label from "@radix-ui/react-label";
 import { useState, useEffect } from "react";
 import { Upload } from "lucide-react";
@@ -21,6 +16,8 @@ interface Props {
 export const AchievementFormModal = ({ studentId, isOpen, onClose }: Props) => {
   const { register, handleSubmit, reset, setValue } = useForm();
   const [fileName, setFileName] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   const { createAchievement } = usePortfolioStore();
 
   useEffect(() => {
@@ -47,12 +44,19 @@ export const AchievementFormModal = ({ studentId, isOpen, onClose }: Props) => {
 
     formData.append("file", data.file);
 
-    await createAchievement(studentId, formData);
-    reset();
-    setFileName(null);
-    onClose(false); // Закрыть модалку
+    try {
+      await createAchievement(studentId, formData);
+      reset();
+      setFileName(null);
+      setError(null);
+      onClose(false); // Закрыть модалку
+    } catch (err: any) {
+      // Проверка статуса или сообщения ошибки (при необходимости уточни)
+      setError(
+        "Ошибка: недопустимый формат файла. Разрешены только PDF, PNG, JPG"
+      );
+    }
   };
-
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Content>
@@ -90,12 +94,15 @@ export const AchievementFormModal = ({ studentId, isOpen, onClose }: Props) => {
               onChange={handleFileChange}
               required
             />
-
             {fileName && (
               <p className="text-sm text-gray-600">
                 📎 Прикреплённый файл:{" "}
                 <span className="font-medium">{fileName}</span>
               </p>
+            )}
+
+            {error && (
+              <p className="text-sm text-red-600 font-medium">{error}</p>
             )}
           </div>
 

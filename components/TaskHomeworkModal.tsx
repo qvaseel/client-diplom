@@ -42,22 +42,30 @@ export const TaskHomeworkModal = ({
     }
   };
 
-  const onSubmit = async (data: any) => {
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("description", data.description || "");
-    formData.append("dueDate", data.dueDate || "");
-    formData.append("lessonId", lesson?.id.toString() || "");
+const onSubmit = async (data: any) => {
+  const formData = new FormData();
 
-    if (data.file instanceof File) {
-      formData.append("file", data.file);
-    }
+  // Прямое получение значений, если useForm не даёт ожидаемые
+  formData.append("title", data.title || homework?.title || "");
+  formData.append("description", data.description || homework?.description || "");
+  formData.append("dueDate", data.dueDate || homework?.dueDate || "");
+  formData.append("lessonId", lesson?.id?.toString() || "");
 
+  if (data.file instanceof File) {
+    formData.append("file", data.file);
+  }
+
+  console.log("✔ PATCH payload", formData);
+
+  try {
     await updateHomework(homework?.id || 1, formData);
     reset();
     setFileName(null);
     onClose(false);
-  };
+  } catch (err) {
+    console.error("Ошибка при обновлении:", err);
+  }
+};
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>

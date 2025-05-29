@@ -31,7 +31,11 @@ export const useHomeworkStore = create<HomeworkStore>((set) => ({
   },
 
   updateHomework: async (homeworkId: number, formData: FormData) => {
-    const res = await api.patch(`/homeworks/${homeworkId}`, formData);
+    const res = await api.patch(`/homeworks/${homeworkId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
     set((state) => ({ homeworks: [...state.homeworks, res.data] }));
   },
 

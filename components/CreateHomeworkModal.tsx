@@ -38,24 +38,37 @@ export const CreateHomeworkModal = ({ lesson, isOpen, onClose, onCreated }: Prop
     }
   };
 
-  const onSubmit = async (data: any) => {
-    const formData = new FormData();
+const onSubmit = async (data: any) => {
+  const formData = new FormData();
 
-    for (const key in data) {
-      if (key !== "file") {
-        formData.append(key, data[key]);
-      }
+  for (const key in data) {
+    if (key !== "file") {
+      formData.append(key, data[key]);
     }
+  }
 
-    formData.append("lessonId", String(lesson?.id));
+  formData.append("lessonId", String(lesson?.id));
+
+  if (data.file) {
     formData.append("file", data.file);
+  }
 
+  // 🔍 Лог FormData для отладки
+  for (const pair of formData.entries()) {
+    console.log(`${pair[0]}:`, pair[1]);
+  }
+
+  try {
     await createHomework(formData);
     reset();
     setFileName(null);
     onClose(false);
     onCreated?.();
-  };
+  } catch (err) {
+    console.error("Ошибка при создании ДЗ:", err);
+  }
+};
+
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
@@ -101,7 +114,6 @@ export const CreateHomeworkModal = ({ lesson, isOpen, onClose, onCreated }: Prop
               type="file"
               className="hidden"
               onChange={handleFileChange}
-              required
             />
 
             {fileName && (

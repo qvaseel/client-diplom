@@ -69,6 +69,7 @@ export const ShowHomeworkModal = ({
       return;
     }
     await updateHomework(homeworkSubmission.id, formData);
+
     reset();
     setFileName(null);
     onClose(false);

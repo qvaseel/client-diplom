@@ -22,7 +22,7 @@ const AdminSchedulePage: React.FC = () => {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Редактирование расписания</h1>
-      <GroupSelector setSelectedGroup={setSelectedGroup} />
+      <GroupSelector setSelectedGroup={setSelectedGroup} selectedGroup={selectedGroup}/>
       <ScheduleTableAdmin selectedGroup={selectedGroup} />
     </div>
   );

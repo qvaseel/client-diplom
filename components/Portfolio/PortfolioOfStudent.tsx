@@ -6,39 +6,40 @@ import { StudentPortfolio } from "@/components/Portfolio/StudentPortfolio";
 import { AchievementFormModal } from "@/components/Portfolio/AchievementFormModal";
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/store/userStore";
+import { usePortfolioStore } from "@/store/portfolioStore";
+import { User } from "@/interface";
+import { Portfolio } from "./Portfolio";
 
-export default function PortfolioStudentPage() {
-  const { id } = useParams();
-  const router = useRouter();
-  const studentId = Number(id);
+interface Props {
+  user: User;
+  innerWidth: number;
+}
 
+export default function PortfolioOfStudentPage({ user, innerWidth }: Props) {
+    const { portfolio, fetchPortfolio } = usePortfolioStore();
+  
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { fetchUser, user, loading } = useUserStore();
 
   useEffect(() => {
-    fetchUser(studentId);
-  }, [fetchUser]);
+      fetchPortfolio(user.id);
+    }, [user]);
 
-  if (!user) return <Spinner loading={loading}/>;
 
   return (
     <Flex direction="column">
       <Flex direction="row" gap="2">
-        <Button onClick={() => router.back()}>Вернуться назад</Button>
         <Button onClick={() => setIsCreateModalOpen(true)}>
           Добавить достижение
         </Button>
       </Flex>
-      <StudentPortfolio
-        userId={studentId}
-        firstName={user?.firstName}
-        lastName={user?.lastName}
-        patronymic={user?.patronymic}
+      <Portfolio
+        userId={user.id}
+        innerWidth={innerWidth}
       />
       <AchievementFormModal
         isOpen={isCreateModalOpen}
         onClose={setIsCreateModalOpen}
-        studentId={studentId}
+        studentId={user.id}
       />
     </Flex>
   );

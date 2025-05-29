@@ -1,6 +1,7 @@
 "use client";
 
 import { Portfolio } from "@/components/Portfolio/Portfolio";
+import PortfolioOfStudentPage from "@/components/Portfolio/PortfolioOfStudent";
 import { Profile } from "@/components/Profile";
 import StudentGradesPage from "@/components/StudentGradesPages";
 import { useInnerWidth } from "@/hooks/useInnerWidth";
@@ -38,7 +39,8 @@ export default function ProfilePage() {
           <Tabs.Content value="portfolio">
             {profileUser && (
               <Spinner loading={loading}>
-                <Portfolio innerWidth={windowWidth} userId={profileUser?.id} />
+                <PortfolioOfStudentPage innerWidth={windowWidth} user={profileUser}/>
+                {/* <Portfolio innerWidth={windowWidth} userId={profileUser?.id} /> */}
               </Spinner>
             )}
           </Tabs.Content>
