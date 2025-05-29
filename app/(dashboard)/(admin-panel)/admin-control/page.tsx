@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import AdminControlClient from "@/components/AdmonControlClient";
+import AdminControlClient from "@/components/AdminControlClient";
 
 export default function AdminControlPage() {
   return (
