@@ -35,9 +35,11 @@ export default function LessonCard({ grade }: Props) {
           Преподаватель: {teacher ? `${teacher.lastName} ${teacher.firstName}` : "Не указан"}
         </div>
         <p> </p>
-        <Button className="w-fit" onClick={() => setIsEditModalOpen(true)}>
+        {lesson.homework && (
+          <Button className="w-fit" onClick={() => setIsEditModalOpen(true)}>
           Открыть ДЗ
         </Button>
+        )}
       </Flex>
       <ShowHomeworkModal
         isOpen={isEditModalOpen}

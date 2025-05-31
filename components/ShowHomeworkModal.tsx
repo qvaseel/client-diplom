@@ -33,6 +33,7 @@ export const ShowHomeworkModal = ({
 }: Props) => {
   const { register, handleSubmit, setValue, reset } = useForm();
   const [fileName, setFileName] = useState<string | null>(null);
+  const [isDeadlinePassed, setIsDeadlinePassed] = useState(false);
   const { updateHomework, fetchOneHomeworkSubmission, homeworkSubmission } =
     useHomeworkSubmissionStore();
 
@@ -47,7 +48,12 @@ export const ShowHomeworkModal = ({
     setFileName(homeworkSubmission?.fileUrl?.split("/").pop() || null);
   }, [homeworkSubmission, register]);
 
-  console.log(homeworkSubmission);
+  useEffect(() => {
+    if (homework?.dueDate) {
+      const due = new Date(homework.dueDate);
+      setIsDeadlinePassed(new Date() > due);
+    }
+  }, [homework]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -58,6 +64,10 @@ export const ShowHomeworkModal = ({
   };
 
   const onSubmit = async (data: any) => {
+    if (isDeadlinePassed) {
+      alert("Внимание: дедлайн уже прошёл. Задание может быть не принято.");
+    }
+
     const formData = new FormData();
 
     if (data.file instanceof File) {
@@ -68,6 +78,7 @@ export const ShowHomeworkModal = ({
       console.error("Нет ID для домашнего задания");
       return;
     }
+
     await updateHomework(homeworkSubmission.id, formData);
 
     reset();
@@ -84,16 +95,23 @@ export const ShowHomeworkModal = ({
           <Flex direction="column" gap="1">
             <Text>Название: {homework?.title}</Text>
             <Text>Описание: {homework?.description}</Text>
-            <Text>
-              Дедлайн:{" "}
-              {homework?.dueDate
-                ? new Date(homework.dueDate).toLocaleDateString("ru-RU", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })
-                : "не указан"}
-            </Text>
+            <Flex gap="2" align="center">
+              <Text>
+                Дедлайн:{" "}
+                {homework?.dueDate
+                  ? new Date(homework.dueDate).toLocaleDateString("ru-RU", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "не указан"}
+              </Text>
+              {isDeadlinePassed && (
+                <Text color="red" weight="bold">
+                  ⏰ Просрочено
+                </Text>
+              )}
+            </Flex>
             <Text>
               <Link
                 href={`${process.env.NEXT_PUBLIC_API_URL}${homework?.fileUrl}`}

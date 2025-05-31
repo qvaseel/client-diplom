@@ -32,7 +32,6 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 
-
 export default function TeacherJournalPage() {
   const { profileUser: user, loading } = useUserProfile();
   const { lessons, loadLessonsByFilter } = useLessonStore();
@@ -149,7 +148,6 @@ export default function TeacherJournalPage() {
   };
 
   return (
-    
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">Журнал преподавателя</h1>
 
@@ -167,64 +165,72 @@ export default function TeacherJournalPage() {
         />
       </Flex>
 
-{students.length > 0 && sortedLessons.length > 0 ? (
-  <div className="relative overflow-auto rounded max-w-full">
-    <table className="min-w-[900px] table-auto border-collapse">
-      <thead className="bg-gray-100 sticky top-0 z-20">
-        <tr className="rounded border-b border-b-gray-200">
-          <th className="sticky bg-gray-100 min-w-[220px] left-0 z-30 p-2">ФИО</th>
-          {sortedLessons.map((lesson) => (
-            <th key={lesson.id} className="bg-gray-100 p-2 whitespace-nowrap z-0">
-              <Link
-                href={{
-                  pathname: `/gradebook/${lesson.id}`,
-                  query: {
-                    groupId: selectedGroup,
-                    disciplineId: selectedDiscipline,
-                  },
-                }}
-                className="text-blue-600 hover:underline"
-                title={lesson.typeOfLesson || "Тип занятия не указано"}
-              >
-                {dayjs(lesson.date).format("DD.MM")}
-              </Link>
-            </th>
-          ))}
-          <th className="sticky right-0 z-30 p-2 min-w-[150px]  bg-gray-100">
-            Средняя оценка
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        {students.map((student) => (
-          <tr key={student.id} className="hover:bg-gray-50 border-b border-b-gray-200">
-            <td className="sticky whitespace-nowrap max-w-[220px] overflow-hidden text-ellipsis left-0 bg-white z-10 p-2">
-              {`${student.lastName} ${student.firstName}`}
-            </td>
-            {sortedLessons.map((lesson) => {
-              const grade = grades.find(
-                (g) =>
-                  g.lesson.id === lesson.id && g.student.id === student.id
-              );
-              return (
-                <td key={lesson.id} className="p-2 text-center ">
-                  {getGradeValue(grade)}
-                </td>
-              );
-            })}
-            <td className="sticky right-0 bg-white z-10 p-2 text-center border-l-2 border-l-gray-200">
-              {calculateAverageGrade(student.id)}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-) : (
-  <p className="text-gray-500">Выберите фильтры для отображения журнала.</p>
-)}
-
-
+      {students.length > 0 && sortedLessons.length > 0 ? (
+        <div className="relative overflow-auto rounded max-w-full">
+          <table className="min-w-[900px] table-auto border-collapse">
+            <thead className="bg-gray-100 sticky top-0 z-20">
+              <tr className="rounded border-b border-b-gray-200">
+                <th className="sticky bg-gray-100 min-w-[220px] left-0 z-30 p-2">
+                  ФИО
+                </th>
+                {sortedLessons.map((lesson) => (
+                  <th
+                    key={lesson.id}
+                    className="bg-gray-100 p-2 whitespace-nowrap z-0"
+                  >
+                    <Link
+                      href={{
+                        pathname: `/gradebook/${lesson.id}`,
+                        query: {
+                          groupId: selectedGroup,
+                          disciplineId: selectedDiscipline,
+                        },
+                      }}
+                      className="text-blue-600 hover:underline"
+                      title={lesson.typeOfLesson || "Тип занятия не указано"}
+                    >
+                      {dayjs(lesson.date).format("DD.MM")}
+                    </Link>
+                  </th>
+                ))}
+                <th className="sticky right-0 z-30 p-2 min-w-[150px]  bg-gray-100">
+                  Средняя оценка
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.map((student) => (
+                <tr
+                  key={student.id}
+                  className="hover:bg-gray-50 border-b border-b-gray-200"
+                >
+                  <td className="sticky whitespace-nowrap max-w-[220px] overflow-hidden text-ellipsis left-0 bg-white z-10 p-2 shadow-[inset_-2px_0_0_0_#3b82f6]">
+                    {`${student.lastName} ${student.firstName}`}
+                  </td>
+                  {sortedLessons.map((lesson) => {
+                    const grade = grades.find(
+                      (g) =>
+                        g.lesson.id === lesson.id && g.student.id === student.id
+                    );
+                    return (
+                      <td key={lesson.id} className="p-2 text-center ">
+                        {getGradeValue(grade)}
+                      </td>
+                    );
+                  })}
+                  <td className="sticky right-0 bg-white z-10 p-2 text-center shadow-[inset_2px_0_0_0_#3b82f6]">
+                    {calculateAverageGrade(student.id)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="text-gray-500">
+          Выберите фильтры для отображения журнала.
+        </p>
+      )}
 
       {selectedScheduleId && (
         <Box>
