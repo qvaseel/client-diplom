@@ -35,7 +35,7 @@ import {
 export default function TeacherJournalPage() {
   const { profileUser: user, loading } = useUserProfile();
   const { lessons, loadLessonsByFilter } = useLessonStore();
-  const { grades, loadAllGradeByGroupAndDiscipline } = useGradeStore();
+  const { grades, loadAllGradeByGroupAndDisciplineWith } = useGradeStore();
   const { schedule, fetchScheduleByGroupAndDiscipline } = useScheduleStore();
   const { createLesson } = useLessonStore();
   const { fetchGroups } = useGroupStore();
@@ -93,7 +93,7 @@ export default function TeacherJournalPage() {
     const loadData = async () => {
       if (!selectedGroup || !selectedDiscipline || !user?.id) return;
 
-      await loadAllGradeByGroupAndDiscipline(selectedGroup, selectedDiscipline);
+      await loadAllGradeByGroupAndDisciplineWith(selectedGroup, selectedDiscipline);
       await loadLessonsByFilter(selectedGroup, selectedDiscipline);
 
       const scheduleData = await fetchScheduleByGroupAndDiscipline(

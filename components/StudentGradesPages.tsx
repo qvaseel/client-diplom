@@ -161,7 +161,7 @@ export default function StudentGradesPage({ innerWidth }: Props) {
                       <Table.Cell>
                         {new Date(g.lesson.date).toLocaleDateString("ru-RU")}
                       </Table.Cell>
-                      <Table.Cell>{g.lesson.typeOfLesson || "-"}</Table.Cell>
+                      <Table.Cell>{g.homeworkSubmissionId ? 'Домашнее задание' : g.lesson.typeOfLesson}</Table.Cell>
                       <Table.Cell>
                         {g.grade == 0 ? `-` : `${g.grade}`}
                       </Table.Cell>

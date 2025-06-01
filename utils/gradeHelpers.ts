@@ -3,19 +3,21 @@ import { Grade } from "@/interface";
 export function groupGradesByDisciplineAndDate(grades: Grade[]) {
   const grouped: Record<
     string,
-    Record<string, { display: string; type: string | undefined }>
+    Record<string, { display: string; type: string | undefined }[]>
   > = {};
 
-  grades.forEach((g) => {
-    const discipline = g.lesson?.schedule?.discipline?.name || "Неизвестно";
-    const date = g.lesson?.date?.slice(0, 10);
-    const grade = g.grade === 0 ? "-" : `${g.grade}`;
-    const display = g.attend === false ? "н" : grade;
-    const type = g.lesson?.typeOfLesson;
+  for (const grade of grades) {
+    const discipline = grade.lesson.schedule.discipline.name;
+    const date = grade.lesson.date;
 
     if (!grouped[discipline]) grouped[discipline] = {};
-    grouped[discipline][date] = { display, type };
-  });
+    if (!grouped[discipline][date]) grouped[discipline][date] = [];
+
+    grouped[discipline][date].push({
+      display: `${grade.grade}${grade.homeworkSubmission ? ' (дз)' : ''}`,
+      type: `${grade.homeworkSubmissionId ? 'Домашнее задание' : grade.lesson.typeOfLesson}`,
+    });
+  }
 
   return grouped;
 }

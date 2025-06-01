@@ -33,7 +33,7 @@ export default function EditLessonPage() {
   const { users, fetchStudentsByGroup } = useUserStore();
   const {
     grades,
-    loadAllGradeByGroupAndDiscipline,
+    loadAllGradeByGroupAndDisciplineWithout,
     createGrade,
     updateGrade,
     findGradeByStudentAndLesson,
@@ -63,7 +63,7 @@ export default function EditLessonPage() {
     getLessonById(lessonId);
     fetchHomeworkByLesson(lessonId);
     fetchStudentsByGroup(Number(groupId));
-    loadAllGradeByGroupAndDiscipline(Number(groupId), Number(disciplineId));
+    loadAllGradeByGroupAndDisciplineWithout(Number(groupId), Number(disciplineId));
   }, [lessonId]);
 
 useEffect(() => {
@@ -135,7 +135,7 @@ useEffect(() => {
       }
     }
 
-    await loadAllGradeByGroupAndDiscipline(
+    await loadAllGradeByGroupAndDisciplineWithout(
       Number(groupId),
       Number(disciplineId)
     );

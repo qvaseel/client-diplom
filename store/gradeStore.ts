@@ -16,7 +16,8 @@ interface GradeStore {
   allGrades: Grade[]; 
   diaryByDate: Record<string, GradeWithLesson[]>
   loadAllGradeByStudentAndDiscipline: (studentId: number, disciplineId: number) => Promise<void>;
-  loadAllGradeByGroupAndDiscipline: (groupId: number, disciplineId: number) => Promise<void>;
+  loadAllGradeByGroupAndDisciplineWithout: (groupId: number, disciplineId: number) => Promise<void>;
+  loadAllGradeByGroupAndDisciplineWith: (groupId: number, disciplineId: number) => Promise<void>;
   loadGradesByLessonId: (lessonId: number) => Grade[];
   loadAllGradesByStudentAcrossDisciplines: (studentId: number) => Promise<void>;
   findGradeByStudentAndLesson: (studentId: number, lessonId: number) => Grade | undefined;
@@ -35,8 +36,13 @@ export const useGradeStore = create<GradeStore>((set, get) => ({
     set({ grades: res.data });
   },
 
-  loadAllGradeByGroupAndDiscipline: async (groupId, disciplineId) => {
-    const res = await api.get<Grade[]>(`/grades/by-group-and-discipline?groupId=${groupId}&disciplineId=${disciplineId}`);
+  loadAllGradeByGroupAndDisciplineWithout: async (groupId, disciplineId) => {
+    const res = await api.get<Grade[]>(`/grades/by-group-and-discipline-without?groupId=${groupId}&disciplineId=${disciplineId}`);
+    set({ grades: res.data });
+  },
+
+    loadAllGradeByGroupAndDisciplineWith: async (groupId, disciplineId) => {
+    const res = await api.get<Grade[]>(`/grades/by-group-and-discipline-with?groupId=${groupId}&disciplineId=${disciplineId}`);
     set({ grades: res.data });
   },
 

@@ -122,6 +122,7 @@ export interface Grade {
   grade?: number;
   comment?: string;
   homeworkSubmission?: HomeworkSubmission;
+  homeworkSubmissionId?: number;
   isHomework: boolean;
   isPassed: boolean;
 }

@@ -24,9 +24,10 @@ export function SummaryGradeTable({ grades, innerWidth }: Props) {
   const allDates = Array.from(allDatesSet).sort();
 
   const calcAverage = (
-    grades: Record<string, { display: string; type: string | undefined }>
+    grades: Record<string, { display: string; type: string | undefined }[]>
   ) => {
     const nums = Object.values(grades)
+      .flat()
       .map((val) => Number(val.display))
       .filter((v) => !isNaN(v) && v >= 1 && v <= 5);
     if (nums.length === 0) return "-";
@@ -57,11 +58,8 @@ export function SummaryGradeTable({ grades, innerWidth }: Props) {
                 return (
                   <Table.Cell key={date}>
                     {gradeObj ? (
-                      <Link
-                        className="text-blue-600"
-                        title={gradeObj.type || "Тип занятия не указан"}
-                      >
-                        {gradeObj.display}
+                      <Link title={gradeObj.map((g) => g.type).join(", ")}>
+                        {gradeObj.map((g) => g.display).join(", ")}
                       </Link>
                     ) : (
                       ""
