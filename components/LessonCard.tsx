@@ -23,22 +23,22 @@ export default function LessonCard({ grade }: Props) {
     <Card>
       <Flex direction="column" gap="2">
         <div className="font-medium">{lesson.schedule.discipline.name}</div>
-<div>
-            Тема: {lesson.topic || "Не указана"}, {lesson.typeOfLesson}, оценка:{" "}
-            {grade.grade ?? "н/б"}
-          </div>
+        <div>
+          Тема: {lesson.topic || "Не указана"}, {lesson.typeOfLesson}, оценка: {grade.grade == 0 ?  "не выставлена" : `${grade.grade}`}
+        </div>
 
         {grade.comment && grade.comment != "" && (
           <div>Комментарий: {grade.comment}</div>
         )}
         <div className="text-sm text-gray-500">
-          Преподаватель: {teacher ? `${teacher.lastName} ${teacher.firstName}` : "Не указан"}
+          Преподаватель:{" "}
+          {teacher ? `${teacher.lastName} ${teacher.firstName}` : "Не указан"}
         </div>
         <p> </p>
         {lesson.homework && (
           <Button className="w-fit" onClick={() => setIsEditModalOpen(true)}>
-          Открыть ДЗ
-        </Button>
+            Открыть ДЗ
+          </Button>
         )}
       </Flex>
       <ShowHomeworkModal

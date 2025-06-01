@@ -14,7 +14,7 @@ export function groupGradesByDisciplineAndDate(grades: Grade[]) {
     if (!grouped[discipline][date]) grouped[discipline][date] = [];
 
     grouped[discipline][date].push({
-      display: `${grade.grade}${grade.homeworkSubmission ? ' (дз)' : ''}`,
+      display: `${grade.grade == 0 ? '-' : `${grade.grade}`}`,
       type: `${grade.homeworkSubmissionId ? 'Домашнее задание' : grade.lesson.typeOfLesson}`,
     });
   }

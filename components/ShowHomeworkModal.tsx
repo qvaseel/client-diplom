@@ -112,7 +112,8 @@ export const ShowHomeworkModal = ({
                 </Text>
               )}
             </Flex>
-            <Text>
+            {homework?.fileUrl && (
+              <Text>
               <Link
                 href={`${process.env.NEXT_PUBLIC_API_URL}${homework?.fileUrl}`}
                 target="_blank"
@@ -120,10 +121,12 @@ export const ShowHomeworkModal = ({
                 Открыть файл с ДЗ
               </Link>
             </Text>
+            )}
           </Flex>
         </Card>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {homeworkSubmission?.grade?.grade && (
+          {homeworkSubmission?.grade?.grade ? (
             <Flex direction="column" gap="2" p={"4"}>
               <Text weight="bold">Домашнее задание принято</Text>
               <Text>
@@ -143,8 +146,8 @@ export const ShowHomeworkModal = ({
                 )}
               </div>
             </Flex>
-          )}
-          {!homeworkSubmission?.grade?.grade && (
+          ) : (
+(
             <Flex direction="column" gap="2" p="4">
               <Text weight="bold">Прикрепите файл с домашним заданием</Text>
 
@@ -188,6 +191,7 @@ export const ShowHomeworkModal = ({
                 )}
               </div>
             </Flex>
+          )
           )}
 
           <Flex justify="between">
