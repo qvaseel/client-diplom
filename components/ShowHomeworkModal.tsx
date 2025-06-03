@@ -106,7 +106,7 @@ export const ShowHomeworkModal = ({
                     })
                   : "не указан"}
               </Text>
-              {isDeadlinePassed && (
+              {isDeadlinePassed && !homeworkSubmission?.grade?.grade && (
                 <Text color="red" weight="bold">
                   ⏰ Просрочено
                 </Text>
