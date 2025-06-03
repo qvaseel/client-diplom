@@ -88,7 +88,14 @@ const handleSaveAll = async () => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {homeworksSubmissions.map((submission) => {
+          {homeworksSubmissions
+  .slice()
+  .sort((a, b) =>
+    a.student.lastName.localeCompare(b.student.lastName, "ru", {
+      sensitivity: "base",
+    })
+  )
+  .map((submission) => {
             const student = submission.student;
             const studentId = student.id;
             const currentGrade = grades[studentId] || {
