@@ -36,42 +36,51 @@ export function SummaryGradeTable({ grades, innerWidth }: Props) {
   };
 
   return (
-    <ScrollArea scrollbars="both" type="always" style={{ maxHeight: 600 }}>
-      <Table.Root variant="surface" size={tableSize}>
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeaderCell>Предмет</Table.ColumnHeaderCell>
-            {allDates.map((date) => (
-              <Table.ColumnHeaderCell key={date}>
-                {new Date(date).toLocaleDateString("ru-RU")}
-              </Table.ColumnHeaderCell>
-            ))}
-            <Table.ColumnHeaderCell>Средняя оценка</Table.ColumnHeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {Object.entries(grouped).map(([discipline, gradesByDate]) => (
-            <Table.Row key={discipline}>
-              <Table.RowHeaderCell>{discipline}</Table.RowHeaderCell>
-              {allDates.map((date) => {
-                const gradeObj = gradesByDate[date];
-                return (
-                  <Table.Cell key={date}>
-                    {gradeObj ? (
-                      <Link title={gradeObj.map((g) => g.type).join(", ")}>
-                        {gradeObj.map((g) => g.display).join(", ")}
-                      </Link>
-                    ) : (
-                      ""
-                    )}
-                  </Table.Cell>
-                );
-              })}
-              <Table.Cell>{calcAverage(gradesByDate)}</Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table.Root>
-    </ScrollArea>
+<div className="relative overflow-auto rounded max-w-full">
+  <table className="min-w-full border-collapse table-auto text-[10px] lg:text-lg">
+    <thead className="bg-gray-100 sticky top-0 z-20">
+      <tr className="rounded border-b border-b-gray-200">
+        <th className="sticky bg-gray-100 min-w-[70px] lg:min-w-[220px] left-0 z-30 p-2 shadow-[inset_-2px_0_0_0_#3b82f6]">
+          Предмет
+        </th>
+        {allDates.map((date) => (
+          <th key={date} className="bg-gray-100 p-2 whitespace-nowrap z-0 ">
+            {new Date(date).toLocaleDateString("ru-RU")}
+          </th>
+        ))}
+        <th className="sticky right-0 z-30 p-2 min-w-[30px] lg:min-w-[100px]  bg-gray-100 shadow-[inset_2px_0_0_0_#3b82f6]">
+          Средняя оценка
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {Object.entries(grouped).map(([discipline, gradesByDate]) => (
+        <tr key={discipline} className="hover:bg-gray-50 border-b border-b-gray-200">
+          <td className="sticky min-w-[70px] lg:min-w-[220px] overflow-hidden text-ellipsis left-0 bg-white z-10 p-2 shadow-[inset_-2px_0_0_0_#3b82f6]">
+            {discipline}
+          </td>
+          {allDates.map((date) => {
+            const gradeObj = gradesByDate[date];
+            return (
+              <td key={date} className="p-2 text-center">
+                {gradeObj ? (
+                  <span title={gradeObj.map((g) => g.type).join(", ")}>
+                    {gradeObj.map((g) => g.display).join(", ")}
+                  </span>
+                ) : (
+                  ""
+                )}
+              </td>
+            );
+          })}
+          <td className="sticky right-0 bg-white z-10 p-2 text-center shadow-[inset_2px_0_0_0_#3b82f6]">
+            {calcAverage(gradesByDate)}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
   );
 }
