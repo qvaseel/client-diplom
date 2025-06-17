@@ -1,13 +1,17 @@
-FROM node:18-alpine
+FROM node:20
 
+# Создаём рабочую директорию
 WORKDIR /app
 
+# Устанавливаем зависимости
 COPY package.json package-lock.json ./
-
 RUN npm install
 
+# Копируем оставшиеся файлы
 COPY . .
 
-EXPOSE 6000
+# Открываем порт
+EXPOSE 3030
 
-CMD ["npm", "run", "dev"]
+# Запускаем dev-сервер
+CMD ["npm", "run", "dev", "--", "-p", "3030"]
