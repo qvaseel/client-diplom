@@ -1,0 +1,11 @@
+version: "3"
+services:
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    ports:
+      - "6000:6000"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - NEXT_PUBLIC_API_URL="https://server-diplom.onrender.com"
