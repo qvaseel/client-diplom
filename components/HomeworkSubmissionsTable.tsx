@@ -109,7 +109,7 @@ const handleSaveAll = async () => {
                   {submission.fileUrl ? (
 
                   <Link
-                    href={`${process.env.NEXT_PUBLIC_API_URL}${submission.fileUrl}`}
+                    href={`https://server-diplom.onrender.com${submission.fileUrl}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     

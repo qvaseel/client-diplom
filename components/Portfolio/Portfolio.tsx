@@ -86,7 +86,7 @@ export const Portfolio = ({ userId, innerWidth }: Props) => {
                   <Table.Cell>{isPassed(a)}</Table.Cell>
                   <Table.Cell>
                     <Link
-                      href={`${process.env.NEXT_PUBLIC_API_URL}${a.fileUrl}`}
+                      href={`https://server-diplom.onrender.com${a.fileUrl}`}
                       target="_blank"
                     >
                       Открыть

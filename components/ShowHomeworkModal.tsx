@@ -115,7 +115,7 @@ export const ShowHomeworkModal = ({
             {homework?.fileUrl && (
               <Text>
               <Link
-                href={`${process.env.NEXT_PUBLIC_API_URL}${homework?.fileUrl}`}
+                href={`https://server-diplom.onrender.com${homework?.fileUrl}`}
                 target="_blank"
               >
                 Открыть файл с ДЗ
@@ -138,7 +138,7 @@ export const ShowHomeworkModal = ({
               <div>
                 {homeworkSubmission?.fileUrl && (
                   <Link
-                    href={`${process.env.NEXT_PUBLIC_API_URL}${homeworkSubmission?.fileUrl}`}
+                    href={`https://server-diplom.onrender.com${homeworkSubmission?.fileUrl}`}
                     target="_blank"
                   >
                     Открыть ваш файл
@@ -154,7 +154,7 @@ export const ShowHomeworkModal = ({
               <div>
                 {homeworkSubmission?.fileUrl && (
                   <Link
-                    href={`${process.env.NEXT_PUBLIC_API_URL}${homeworkSubmission?.fileUrl}`}
+                    href={`https://server-diplom.onrender.com${homeworkSubmission?.fileUrl}`}
                     target="_blank"
                   >
                     Открыть ваш файл

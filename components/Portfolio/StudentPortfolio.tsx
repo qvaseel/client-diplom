@@ -83,7 +83,7 @@ export const StudentPortfolio = ({ userId, firstName, lastName, patronymic }: Pr
                 <Table.Cell>{isPassed(a)}</Table.Cell>
                 <Table.Cell>
                   <Link
-                    href={`${process.env.NEXT_PUBLIC_API_URL}${a.fileUrl}`}
+                    href={`https://server-diplom.onrender.com${a.fileUrl}`}
                     target="_blank"
                   >
                     Открыть

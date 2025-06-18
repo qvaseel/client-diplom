@@ -92,7 +92,7 @@ const onSubmit = async (data: any) => {
 
           <div>
             <Link
-              href={`${process.env.NEXT_PUBLIC_API_URL}${homework?.fileUrl}`}
+              href={`https://server-diplom.onrender.com${homework?.fileUrl}`}
               target="_blank"
             >
               Открыть
